@@ -21,24 +21,25 @@
         </div>
         <div class="config">
             <h3><span>C</span>onfigure.</h3>
-            <p id="b"></p>
-            <button id="fsbtn" onclick="fullScreen()">access fullscreen</button>
-            <button onclick="chek_hb_d(this)">show hitboxes</button>
+            <button id="fsbtn" onclick="fullScreen(this)">Enter fullscreen</button>
+            <button onclick="switch_gyro(this)">Use buggy-gyroscope</button>
+            <button onclick="chek_hb_d(this)">Show hitboxes</button>
         </div>
         <h3><span>H</span>ow to ?</h3>
         <p>  If you are on a device with touch screen,
               you have the 33% of your screen width on left & right 
               to move to those respective directions.
               Tap and hold to continuesly move the pot.
+              Using gyroscope is a bit buggy. While taping tha screen,
+              you can tilt your phone left or right to move the pot.
               Else if you are triying this with a keyboard,
+              first you have to resize your window to look like a smartphone.
              use your right arrow key to move the pot to right,
               or the left arrow key to move the pot to left.
         </p>
         <h3><span>S</span>h shh...</h3>
-        <p style="margin-top: 10px;">
-            Made by: <a href="http://ash-faque.github.io" target="_blank" rel="noopener noreferrer">Me</a>
-        </p>
         <p style="width: 60%; margin: 10px 20%; padding: 10px; background-color: #005555;" onclick="feedback()">Write a feedback.</p>
+        <a href="http://ash-faque.github.io" target="_blank" rel="noopener noreferrer" style="margin-top: 10px;">Made By Me</a>
     </div>
     <div class="game">
         <canvas class="canvas"></canvas>

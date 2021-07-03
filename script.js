@@ -11,7 +11,8 @@ const coin_img = new Image(40, 40)
         coin_img.src = 'coin.png'
 const pot_img = new Image(40, 40)
         pot_img.src = 'pot.png'
-
+var playWithGyro = false
+var touched = false
 
 const showScore = () => {
     ctx.fillStyle = '#ffbb00'
@@ -19,7 +20,11 @@ const showScore = () => {
     ctx.fillText(`SCORE: ${score}$`, 20, 30)
     ctx.fillStyle = '#40fc2f'
     ctx.font = '20px monospace'
-    ctx.fillText(`LIFE: ${life}❤`, 20, 55)
+    let lifeSign = '';
+    for (let i = 0; i < life; i++){
+        lifeSign = lifeSign + '💚';
+    }
+    ctx.fillText(`LIFE: ${lifeSign}`, 20, 55)
     ctx.fillStyle = '#2f70fc'
     ctx.font = '16px monospace'
     ctx.fillText(`HARDNESS: ${hardness.toFixed(3)}x`, 20, 75)
@@ -38,7 +43,7 @@ adaptCanvasSize()
 class Gold {
     constructor (x, dy){
         this.x = x
-        this.y = 50
+        this.y = -20
         this.dy = dy
         this.scrored = false
         this.missed = false
@@ -70,10 +75,23 @@ class Plate  {
         this.x = canvas.width / 2;
         this.slideToRight = false;
         this.slideToLeft = false;
+        this.gyroSpeed = 3;
     }
     draw = () => {
-        if (this.slideToRight && ((this.x + 100) < canvas.width)) this.x += 2;
-        if (this.slideToLeft && ((this.x) > 0)) this.x -= 2;
+        if (this.slideToRight && ((this.x + 100) < canvas.width)){
+            if (playWithGyro){
+                this.x += this.gyroSpeed;
+            } else {
+                this.x += 5;
+            }
+        }
+        if (this.slideToLeft && ((this.x) > 0)){
+            if (playWithGyro){
+                this.x -= this.gyroSpeed;
+            } else {
+                this.x -= 5;
+            }
+        }
         ctx.beginPath()
         if (showHitbox){
             ctx.fillStyle = 'green';
@@ -108,41 +126,59 @@ window.addEventListener('keydown', (e) => {
     }
 })
 
-// gyroscope                                                                                    // todoooo
-window.addEventListener('deviceorientation', (e) => {
-    let a = e.alpha;
-    let dir;
-    if (a < 360 && a > 270){
-        console.log('to left')
-        dir = 'to left';
-    }
-    if (a > 0 && a < 90){
-        console.log('to right')
-        dir = 'to right';
-    }
-    //console.log(a)
-    document.getElementById('b').innerText = dir
-})
 
-
-// touch
-window.addEventListener('touchstart', (e) => {
-    let touches = e.changedTouches;
-    for (let i = 0; i < touches.length; i++){
-        let x = touches[i].clientX;
-        if (x < (canvas.width / 3)){
-            plate.slideToLeft = true
-            plate.slideToRight = false
-        } else if (x > ((canvas.width / 3) * 2)){
+// input methods 
+const initInput = () => {
+    if (playWithGyro){
+        // gyro
+        window.addEventListener('deviceorientation', (e) => {
+            let a = e.alpha;
+            if (touched){
+                if ((a > 3) && (a < 90)){
+                    plate.slideToLeft = true
+                    plate.slideToRight = false
+                };
+                if ((a < 358) && (a > 270)){
+                    plate.slideToRight = true
+                    plate.slideToLeft = false
+                };
+            }
+            
+        });
+    };
+    // touch
+    window.addEventListener('touchstart', (e) => {
+        let touches = e.changedTouches;
+        for (let i = 0; i < touches.length; i++){
+            let x = touches[i].clientX;
+            if (x < (canvas.width / 3)){
+                if (!playWithGyro){
+                    plate.slideToLeft = true
+                    plate.slideToRight = false
+                } else {
+                    touched = true
+                };
+            } else if (x > ((canvas.width / 3) * 2)){
+                if (!playWithGyro){
+                    plate.slideToLeft = false
+                    plate.slideToRight = true
+                } else {
+                    touched = true
+                };
+            };
+        };
+    });
+    window.addEventListener('touchend', () => { 
+        if (!playWithGyro){
             plate.slideToLeft = false
-            plate.slideToRight = true
+            plate.slideToRight = false
+        } else {
+            touched = false
         }
-    }
-})
-window.addEventListener('touchend', () => { 
-    plate.slideToLeft = false
-    plate.slideToRight = false
-})
+    });
+};
+
+
 
 
 
@@ -153,20 +189,27 @@ const end_s =  document.querySelector('.end')
 const l_score_d = document.querySelector('#l_score')
 const h_score_d = document.querySelector('#h_score')
 const update_h_score = () => {
-    if (localStorage.h_score){
-        h_score_d.innerText = localStorage.h_score;
-    }
+    h_score_d.innerText = localStorage.h_score;
 }
 update_h_score();
-const fullScreen  = () => {
+const switch_gyro = (btn) => {
+    playWithGyro = !playWithGyro;
+    if (playWithGyro){
+        btn.innerText = 'Use tochscreen'
+    } else {
+        btn.innerText = 'Use buggy-gyroscope'
+    };
+    initInput()
+}
+const fullScreen  = (btn) => {
     if (!document.fullscreenElement){
         document.documentElement.requestFullscreen()
-    }
-    if (document.exitFullscreen){
+        btn.innerText = 'Exit fullscreen'
+    } else {
         document.exitFullscreen()
+        btn.innerText = 'Enter fullscreen'
     }
 }
-document.getElementById('fsbtn').click()
 const chek_hb_d = (btn) => {
     showHitbox = !showHitbox;
     if (showHitbox){
@@ -186,9 +229,9 @@ const feedback = () => {
 const startGame = () => {
     welcom_s.style.display = 'none';
     game_s.style.display = 'block';
+    initInput()
     gold_dropper = setInterval(dropGold, 2000)
     animate()
-    //fullScreen()
 }
 // end game
 const endGame = () => {
@@ -210,7 +253,7 @@ const endGame = () => {
 // animation
 function animate() {
     current_animation = requestAnimationFrame(animate);
-    ctx.fillStyle = '#252525'
+    ctx.fillStyle = 'rgba(0, 0, 0, .125)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // drop golds
