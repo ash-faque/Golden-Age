@@ -3,12 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Age</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Money Monsoon</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <canvas></canvas>
+    <div class="welcom">
+        <h2>💰<span>💰</span>💰</h2>
+        <h5>welcom back to</h5>
+        <h3><span>M</span>oney</h3>
+        <h1><span>M</span>onsoon</h1>
+        <h4>catch as much gold as you can</h4>
+        <button onclick="startGame()">Goooooo</button>
+        <div class="history">
+            <p>your last score: <span id="l_score">00</span></p>
+            <p>your high score: <span id="h_score">00</span></p>
+        </div>
+        <div class="config">
+            <h3><span>C</span>onfigure.</h3>
+            <p id="b"></p>
+            <button onclick="fullScreen()">access fullscreen</button>
+            <button onclick="chek_hb_d(this)">show hitboxes</button>
+        </div>
+        <h3><span>H</span>ow to ?</h3>
+        <p>  If you are on a device with touch screen,
+              you have the 33% of your screen width on left & right 
+              to move to those respective directions.
+              Tap and hold to continuesly move the pot.
+              Else if you are triying this with a keyboard,
+             use your right arrow key to move the pot to right,
+              or the left arrow key to move the pot to left.
+        </p>
+        <h3><span>S</span>h shh...</h3>
+        <p style="margin-top: 10px;">
+            Made by: <a href="http://ash-faque.github.io" target="_blank" rel="noopener noreferrer">Me</a>
+        </p>
+        <p style="width: 60%; margin: 10px 20%; padding: 10px; background-color: #005555;" onclick="feedback()">Write a feedback.</p>
+    </div>
+    <div class="game">
+        <canvas class="canvas"></canvas>
+    </div>
     <script src="/script.js"></script>
 </body>
 </html>
