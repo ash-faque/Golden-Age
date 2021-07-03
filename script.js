@@ -166,6 +166,7 @@ const fullScreen  = () => {
         document.exitFullscreen()
     }
 }
+document.getElementById('fsbtn').click()
 const chek_hb_d = (btn) => {
     showHitbox = !showHitbox;
     if (showHitbox){
@@ -187,7 +188,7 @@ const startGame = () => {
     game_s.style.display = 'block';
     gold_dropper = setInterval(dropGold, 2000)
     animate()
-    fullScreen()
+    //fullScreen()
 }
 // end game
 const endGame = () => {
